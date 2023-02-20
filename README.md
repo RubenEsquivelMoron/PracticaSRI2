@@ -23,6 +23,8 @@ sudo apt install php libapache2-mod-php php-mysql
 
 ## Ejercicio 2 - Creación de usuarios y del directorio correspondiente para el alojamiento web (script)
 
+- Para crear un usuario en el sistema, deberemos escribir el siguiente comando:
+
 
 
 ## Ejercicio 3 - Host virtual en apache (script)
