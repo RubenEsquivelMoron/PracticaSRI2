@@ -55,10 +55,6 @@ sudo nano /etc/hosts
 ```bash
 <ip>      <alias>
 ```
-### Resultado
-	
-
-
 ### Script Usuarios
 
 ```bash
@@ -316,7 +312,7 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/privat
 ```bash
 sudo nano /etc/ssl/certs/vsftpd.crt
 ```
-IMAGEN
+![](Practica_Ignacio/tls/capturas/7.png)
 - Seguidamente, deberemos irnos al srchivo de configuracion del vsftps
 ```bash
 sudo nano /etc/vsftpd.conf
@@ -385,6 +381,34 @@ echo "*********************************************"
 echo "Base de datos y usuario creados correctamente"
 echo "*********************************************"
 ```
+- Tambien deberemos utilizar phpmyadmin, con lo que lo instalaremos con:
+```bash
+sudo apt install phpmyadmin
+```
+- A parte, podremos acceder a phpmyadmin desde el navegador escribiendo:
+```
+localhost/phpmyadmin
+```
+- Podremos acceder al gestor de bases de datos, donde para iniciar sesion, deberemos escribir
+```
+usuario: phpmyadmin
+contraseña:<contraseña_de_root>
+```	
+- Escribiremos los credenciales y ya ingresaremos a phpmyadmin pero no podremos visualizar todas las bases de datos
+- Para ello, deberemos ingresar en mysql
+```bash
+sudo mysql
+contraseña:
+```
+- Ejecutaremos la siguiente sentencia
+```mysql
+grant all privileges on *.* to 'phpmyadmin'@'localhost' identified by '<contraseña_usuario>';
+```
+- Y ya podremos acceder a phpmyadmin viendo tas las bases de datos del sistema
+	
+### Resultado
+	
+![](Practica_Ignacio/phpmyadmin/3.png)
 	
 ## Ejercicio 8 - Se habilitará la ejecución de aplicaciones Python con el servidor web 
 	
@@ -446,6 +470,7 @@ sudo service apache2 restart
 ```
 http://paco.marisma.local
 ```
-### Prueba de funcionamiento
+### Resultado
 
+![](Practica_Ignacio/6/Capturas/2.png)
 	
