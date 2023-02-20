@@ -267,13 +267,75 @@ port 22
 - Y ya podremos utilizar ssh con los usuarios creados, lo cual necesitaremos el siguiente comando
 	
 ```bash
-	ssh <usuario>@ip_que_utiliza
+ssh <usuario>@ip_que_utiliza
 ```
+- Un dato a parte, es que al instalar el servicio ssh, ya con agregar un usuario al sistema, podremos acceder a su ssh/sftp completamente
 ###Comprobacion
 	
-###Script de acceso
+### Script de creacion de usuario con ssh/sftp
+```bash
+#!/bin/bash
 
+echo "Dime un nuevo usuario"
+read usuario
+
+while id $usuario &> /dev/null;
+do
+  echo "Este usuario ya existe en el sistema"
+  echo "Escriba un usuario nuevo"
+  read usuario
+done
+useradd -d /home/$usuario -g 1000 -m -s /bin/bash $usuario
+passwd $usuario
+
+echo "*****************************"
+echo "Usuario con SSH y SFTP creado"
+echo "*****************************"
+```
 ## Ejercicio 5 - Los clientes podrán acceder mediante ftp para la administración de archivos configurando adecuadamente TLS
+- Para comenzar a utilizar la configuracion TLS para el cifrado de datos, comenzaremos instalando este servicio:
+```bash
+sudo apt instal vsftpd openssl
+```
+- Al tenerlo instalado, deberemos escribir el siguiente comando para genera el certificado de cifrado
+```bash
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/vsftpd.key -out /etc/ssl/certs/vsftpd.crt
+```	
+- Este comando generará un certificado de 1 año de duracion que generará una clave privada y un archivo certificado publico en los directotios `/etc/ssl/private` y `/etc/ssl/certs`
+- Tras ejecutar el comando, nos aparecerán varios datos los cuales deberemos rellenar con informacion personal para la creacion del certificado
+	
+- Tras escribir esos datos, se generará el certificado, el cual podremos ver en el siguiente fichero
+```bash
+sudo nano /etc/ssl/certs/vsftpd.crt
+```
+IMAGEN
+- Seguidamente, deberemos irnos al srchivo de configuracion del vsftps
+```bash
+sudo nano /etc/vsftpd.conf
+```
+- Deberemos editar el archivo de texto y tendremos que escribir las siguientes lineas
+```bash
+ssl_enable=YES
+allow_anon_ssl=NO
+force_local_data_ssl=YES
+force_local_logins_ssl=YES
+ssl_tlsv1=YES
+ssl_tlsv2=NO
+ssl_tlsv3=NO
+require_ssl_reuse=NO
+```
+- Guardaremos el archivo y reiniciaremos el servicio vsftpd
+```bash
+sudo service vsftpd restart
+```
+- Por ultimo, deberemos configurar el firewall para las conexiones FTP por TLS
+```bash
+sudo iptables -A INPUT -p tcp --dport 20 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 21 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 990 -j ACCEPT
+```
+- Y ya podremos utilizar el servicio SFTP y ssh por el certificado TLS encriptado
+	
 ## Ejercicio 6 - Se creará un subdominio en el servidor DNS con las resolución directa e inversa (script)
 ## Ejercicio 7 - Se creará una base de datos además de un usuario con todos los permisos sobre dicha base de datos (ALL PRIVILEGES) (script)
 ## Ejercicio 8 - Se habilitará la ejecución de aplicaciones Python con el servidor web 
