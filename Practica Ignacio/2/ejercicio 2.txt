@@ -1,0 +1,3 @@
+Script de creacion de usuarios:
+
+para crear los usuarios, deberemos 
