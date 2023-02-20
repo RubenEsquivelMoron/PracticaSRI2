@@ -58,7 +58,24 @@ sudo nano index.html
   </body>
 </html>
 ```
-
+- Guardaremos eel archivo, y nos dirigiremos a la ruta /etc/apache/sites-available/
+- Ahi, crearemos el archivo .conf y podemos hacerlo desde cero, o tambien podemos copiar el archivo 000
+```bash
+sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/paco.conf
+```
+- Ahora, editaremos el archivo con
+```bash
+sudo nano /etc/apache2/sites-available/paco.conf
+```
+- Y escribiremos lo siguiente:
+```bash
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
 ## Ejercicio 3 - Host virtual en apache (script)
 ## Ejercicio 4 - Creación de usuario del sistema para acceso a ftp, ssh, smtp (script)
 ## Ejercicio 5 - Los clientes podrán acceder mediante ftp para la administración de archivos configurando adecuadamente TLS
