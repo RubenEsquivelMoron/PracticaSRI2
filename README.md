@@ -74,11 +74,11 @@ sudo nano /etc/apache2/sites-available/paco.conf
 ```bash
 <VirtualHost *:80>
      ServerAdmin admin@paco.marisma.local
-	   ServerName www.paco.marisma.local
-	   ServerAlias paco.marisma.local
+     ServerName www.paco.marisma.local
+     ServerAlias paco.marisma.local
      DocumentRoot /var/www/paco/public_html
-	   ErrorLog /error.log
-	   CustomLog /access.log combined
+     ErrorLog /error.log
+     CustomLog /access.log combined
 </VirtualHost>
 ```
 - Seguidamente, deberemos habilitar nuestro sitio web
