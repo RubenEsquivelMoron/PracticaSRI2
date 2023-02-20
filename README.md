@@ -378,7 +378,66 @@ echo "Base de datos y usuario creados correctamente"
 echo "*********************************************"
 ```
 	
-	
-	
-	
 ## Ejercicio 8 - Se habilitará la ejecución de aplicaciones Python con el servidor web 
+	
+- Para habilitar la ejecucion de aplicacion Python en el servidor web, deberemos instalar el servicio wsgi
+```bash
+sudo apt-get install libapache2-mod-wsgi
+```
+- Al tenerlo instalado, vamos crear una pagina para probar que funcione correctamente
+- Para ello, crearemos un usuario nuevo y nos iremos a su carpeta de /var/www/
+```
+cd /var/www/<usuario_nuevo>/
+sudo mkdir mypythonapp
+sudo mkdir public_html
+```
+- Entraremos en la carpeta "mypythonapp" y crearemos la aplicacion python
+```
+cd /var/www/<usuario>/mypythonapp
+sudo nano controller.py
+```
+- En la cual, deberemos escribir la aplicacion que deseemos, pero en mi caso escribiré esto a modo de prueba
+```html
+# -*- conding: utf-8 -*-
+
+def application(environ, start_response):
+    # Genero la salida HTML a mostrar al usuario
+    output = "<p>Bienvenido a mi <b>PythonApp</b>!!!</p>"
+    # Inicio una respuesta al navegador
+    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
+    # Retorno el contenido HTML
+    return output
+```
+- Ahora, nos iremos a la carpeta del virtual host y abriremos la carpeta del usuario_creado.conf (si no existe, deberemos crearla)
+```bash
+cd /etc/apache2/sites-available
+sudo nano usuario.conf
+```
+- Y deberemos escribir o agregar lo siguiente
+```bash
+<VirtualHost *:80>
+    ServerName usuario.com
+
+    DocumentRoot /var/www/usuario/public_html
+    WSGIScriptAlias / /var/www/usuario/mypythonapp/controller.py
+
+</VirtualHost>
+```
+- Ahora, deberemos habilitar el virtual host
+```bash
+sudo a2ensite usuario.conf
+Site usuario.com already enabled
+```
+- Un dato a parte, es que necesitamos que en el archivo host, esté incluida una ip y un alias para referirnos a la pagina
+
+- Por ultimo, lo que deberemos hacer es, reiniciar el servicio de apache
+```
+sudo service apache2 restart
+```
+- Y ya podremos visualizar la pagina al referirnos por el siguiente enlace:
+```
+http://paco.marisma.local
+```
+### Prueba de funcionamiento
+
+	
