@@ -270,8 +270,9 @@ port 22
 	ssh <usuario>@ip_que_utiliza
 ```
 ###Comprobacion
-###Script de acceso
 	
+###Script de acceso
+
 ## Ejercicio 5 - Los clientes podrán acceder mediante ftp para la administración de archivos configurando adecuadamente TLS
 ## Ejercicio 6 - Se creará un subdominio en el servidor DNS con las resolución directa e inversa (script)
 ## Ejercicio 7 - Se creará una base de datos además de un usuario con todos los permisos sobre dicha base de datos (ALL PRIVILEGES) (script)
