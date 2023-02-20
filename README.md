@@ -338,4 +338,47 @@ sudo iptables -A INPUT -p tcp --dport 990 -j ACCEPT
 	
 ## Ejercicio 6 - Se creará un subdominio en el servidor DNS con las resolución directa e inversa (script)
 ## Ejercicio 7 - Se creará una base de datos además de un usuario con todos los permisos sobre dicha base de datos (ALL PRIVILEGES) (script)
+- Teniendo el servicio mysql instalado, deberemos ingresar a mysql a traves del terminal
+```bash
+sudo mysql
+```
+- Escribiremos la contraseña de usuario root y desde ahi, podremos observar y administrar nuestras bases de datos con los siguientes comandos:
+
+Ver bases de datos
+```mysql
+show databases;
+``` 
+Ver usuarios de phpmyadmin
+```mysql
+select user from mysql.user;
+```
+- Seguidamente, para darle privilegios sobre esa base de datos, deberemos escribir el siguiente comando (como root)
+```mysql
+GRANT ALL PRIVILEGES ON <base_de_datos>.* TO '<usuario>'@'localhost' IDENTIFIED BY '<contraseña>';"
+```
+Por ultimo, para ver los privilegios que le hemos dado a los usuarios, deberemos escribir el siguiente comando:
+```mysql
+show grants for '<usuario>'@'localhost';
+```
+- Y ya podremos agregar el usuario y base de datos correctamente en nuestro sistema
+
+### Script de privilegios y usuarios automaticos en base de datos
+
+```bash
+#!/bin/bash
+
+read -p "Introduce el nombre de usuario:" db_user
+
+mysql -u root -p -e "CREATE DATABASE ${db_user};"
+
+mysql -u root -p -e "GRANT ALL PRIVILEGES ON ${db_user}.* TO '${db_user}'@'localhost' IDENTIFIED BY 'password';"
+
+echo "*********************************************"
+echo "Base de datos y usuario creados correctamente"
+echo "*********************************************"
+```
+	
+	
+	
+	
 ## Ejercicio 8 - Se habilitará la ejecución de aplicaciones Python con el servidor web 
