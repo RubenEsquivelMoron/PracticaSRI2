@@ -24,7 +24,91 @@ sudo apt install php libapache2-mod-php php-mysql
 ## Ejercicio 2 - Creación de usuarios y del directorio correspondiente para el alojamiento web (script)
 
 - Para crear un usuario en el sistema, deberemos escribir el siguiente comando:
+```bash
+sudo useradd <nombre_del_usuario_nuevo>
+```
+- Al crear el usuario, deberemos crearle su carpeta donde guardaremos su pagina personal para ese usuario y su index predeterminado
+```bash
+sudo mkdir -p /var/www/<usuario>/public_html
+sudo touch /var/www/<usuario>/public_html/index.html
+```
+- Seguidamente, deberemos entrar en el archivo /var/www/<usuario>/public_html/index.html
+```bash
+sudo nano /var/www/<usuario>/public_html/index.html
+```
+- deberemos hacer una plantilla html en el archivo index.html
+```html
+<html>
+  <head>
+    <title> maria </title>
+    <body>
+      <h1> Esto es la pagina de maria </h1>
+    </body>
+  </head>
+</html>
+```
+- Por ultimo, deberemos agregar una ip y un alias en el archivo hosts, para ello, deberemosirnos a /etc/hosts
+```bash
+sudo nano /etc/hosts
+```
+- Y deberemo agregar la ip del servidor (la que queramos en esa subred, y un alias)
+```bash
+<ip>      <alias>
+```
+FOTO
 
+### Script Usuarios
+
+```bash
+#!/bin/bash
+
+echo "-------------------------------------"
+echo "Proyecto Servicios de red de internet"
+echo "-------------------------------------"
+# Creacion de usuario por teclado
+echo "Dime un nuevo usuario"
+read usuario
+
+while id $usuario &> /dev/null;
+do
+	echo "Este usuario ya existe en el sistema"
+	echo "Escriba un usuario nuevo"
+	read usuario
+done
+	useradd -d /home/$usuario -g 1000 -m -s /bin/bash $usuario
+	passwd $usuario
+
+
+#Creacion de host virtual por ese usuario creado
+mkdir -p /var/www/$usuario/public_html
+chown -R $USER:$USER /var/www/$usuario/public_html
+chmod -R 755 /var/www
+#Crear pagina de demostracion por cada host
+touch /var/www/$usuario/public_html/index.html
+
+#--------------------------------------------------------
+#Plantilla HTML
+echo "<html>" >> /var/www/$usuario/public_html/index.html
+echo "<head>" >> /var/www/$usuario/public_html/index.html
+echo "<title> $usuario </title>" >> /var/www/$usuario/public_html/index.html
+
+
+echo "<body>" >> /var/www/$usuario/public_html/index.html
+	echo "<h1> Esto es la pagina de $usuario </h1>" >> /var/www/$usuario/public_html/index.html
+echo "</body>" >> /var/www/$usuario/public_html/index.html
+
+
+echo "</head>" >> /var/www/$usuario/public_html/index.html
+echo "</html>" >> /var/www/$usuario/public_html/index.html
+#--------------------------------------------------------
+
+
+echo "Creando usuario..."
+sleep 3;
+echo "**************"
+echo "Usuario creado"
+echo "**************"
+```
 
 
 ## Ejercicio 3 - Host virtual en apache (script)
