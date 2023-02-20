@@ -23,6 +23,9 @@ sudo apt install php libapache2-mod-php php-mysql
 
 ## Ejercicio 2 - Creación de usuarios y del directorio correspondiente para el alojamiento web (script)
 
+
+
+## Ejercicio 3 - Host virtual en apache (script)
 - Comenzaremos actualizando los repositorios
 ```bash
 ssudo apt update
@@ -59,7 +62,7 @@ sudo nano index.html
 </html>
 ```
 - Guardaremos eel archivo, y nos dirigiremos a la ruta /etc/apache/sites-available/
-- Ahi, crearemos el archivo .conf y podemos hacerlo desde cero, o tambien podemos copiar el archivo 000
+- Ahi, crearemos el archivo .conf y podemos hacerlo desde cero, o tambien podemos copiar el archivo 000-default.conf
 ```bash
 sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/paco.conf
 ```
@@ -70,13 +73,44 @@ sudo nano /etc/apache2/sites-available/paco.conf
 - Y escribiremos lo siguiente:
 ```bash
 <VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html
+    ServerAdmin admin@paco.com
+    ServerName paco.com
+    ServerAlias www.paco.com
+    DocumentRoot /var/www/paco.com/public_html
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 ```
-## Ejercicio 3 - Host virtual en apache (script)
+- Seguidamente, deberemos habilitar nuestro sitio web
+```bash
+sudo a2ensite paco.conf
+```
+- Tambien, deberemos deshabilitar el sitio web por defecto (000-default.conf)
+```bash
+sudo a2dissite 000-default.conf
+```
+- Tambien deberemos asignar una ip y un dominio a cada host que creemos en el archivo ubicado en /etc
+```bash
+sudo nano /etc/hosts
+```
+- Editaremos el archivo agregando una ip y un dominio a cadaa host que creemos
+```bash
+127.0.0.1   localhost
+127.0.1.1   guest-desktop
+your_server_IP paco.com
+```
+- Por ultimo reiniciaremos apache para guardar/aplicar los cambios en el sistema
+```bash
+sudo service apache22 restart
+```
+- Y ya tendremos nuestro sitio web habilitado, el cual para probarlo, deberemos irnos al navegador y escribir:
+```
+http://paco.com
+```
+
+### Resultado:
+### Script automatico de creacion 
+
 ## Ejercicio 4 - Creación de usuario del sistema para acceso a ftp, ssh, smtp (script)
 ## Ejercicio 5 - Los clientes podrán acceder mediante ftp para la administración de archivos configurando adecuadamente TLS
 ## Ejercicio 6 - Se creará un subdominio en el servidor DNS con las resolución directa e inversa (script)
