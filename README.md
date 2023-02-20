@@ -250,7 +250,27 @@ fi
 	
 	
 ## Ejercicio 4 - Creación de usuario del sistema para acceso a ftp, ssh, smtp (script)
+
+- Para comenzar, deberemos instalar el servicio ssh
+```bash
+sudo apt install openssh-server
+```
+- Tras instalar el servicio, ya podremos utilizar el servicio ssh con los usuarios del sistema, pero antes deberemos irnos al archivo de configuracion del servicio de ssh
+```bash
+sudo nano /etc/ssh/sshd_config
+```
 	
+- Al entrar deberemos descomentar la siguiente linea
+```bash
+port 22
+```
+- Y ya podremos utilizar ssh con los usuarios creados, lo cual necesitaremos el siguiente comando
+	
+```bash
+	ssh <usuario>@ip_que_utiliza
+```
+###Comprobacion
+###Script de acceso
 	
 ## Ejercicio 5 - Los clientes podrán acceder mediante ftp para la administración de archivos configurando adecuadamente TLS
 ## Ejercicio 6 - Se creará un subdominio en el servidor DNS con las resolución directa e inversa (script)
