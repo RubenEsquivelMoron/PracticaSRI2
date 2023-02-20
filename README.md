@@ -197,7 +197,61 @@ http://paco.com
 ### Resultado:
 ### Script automatico de creacion 
 
+```bash
+#!/bin/bash
+
+read -p "Introduce el nombre de usuario: " usuario
+
+# El archivo.conf
+CONF="${usuario}.marisma.conf"
+
+# El sites.avaliable
+PATH_AVAILABLE="/etc/apache2/sites-available/${CONF}"
+
+# El sites.enabled
+PATH_ENABLED="/etc/apache2/sites-enabled/${CONF}"
+
+# Subdominio
+SUB_DOMAIN="${usuario}.marisma.local"
+
+# La carpeta donde va la página web
+DOCUMENT_ROOT="/var/www/$usuario"
+
+# El índice
+INDEX="${DOCUMENT_ROOT}/index.html"
+
+touch $PATH_AVAILABLE
+
+if [ -f $PATH_AVAILABLE ] ; then
+   echo "Creando fichero de configuración"
+   echo "<VirtualHost *:80>
+           ServerAdmin admin@$SUB_DOMAIN
+	   ServerName www.$SUB_DOMAIN
+	   ServerAlias $SUB_DOMAIN
+           DocumentRoot $DOCUMENT_ROOT/public_html
+	   ErrorLog ${APACHE_LOG_DIR}/error.log
+	   CustomLog ${APACHE_LOG_DIR}/access.log combined
+    	  </VirtualHost>" >> $PATH_AVAILABLE
+
+   a2ensite $CONF
+
+   read -p "Introduce una dirección IP para el host: " ip
+   read -p "Introduce el dominio que quieres asociarle que sea .marisma.local: " dominio
+
+   echo "****************************************************"
+   echo "Tu sitio web está alojado en http://$dominio.marisma.local"
+   echo "****************************************************"
+
+   service apache2 restart
+
+   echo "$ip	$dominio.marisma.local" >> /etc/hosts
+fi
+```
+	
+	
 ## Ejercicio 4 - Creación de usuario del sistema para acceso a ftp, ssh, smtp (script)
+	
+	
 ## Ejercicio 5 - Los clientes podrán acceder mediante ftp para la administración de archivos configurando adecuadamente TLS
 ## Ejercicio 6 - Se creará un subdominio en el servidor DNS con las resolución directa e inversa (script)
 ## Ejercicio 7 - Se creará una base de datos además de un usuario con todos los permisos sobre dicha base de datos (ALL PRIVILEGES) (script)
