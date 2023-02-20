@@ -97,7 +97,7 @@ sudo nano /etc/hosts
 ```bash
 127.0.0.1   localhost
 127.0.1.1   guest-desktop
-your_server_IP paco.com
+your_server_IP paco.marisma.local
 ```
 - Por ultimo reiniciaremos apache para guardar/aplicar los cambios en el sistema
 ```bash
