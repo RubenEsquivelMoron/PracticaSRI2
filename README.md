@@ -55,7 +55,9 @@ sudo nano /etc/hosts
 ```bash
 <ip>      <alias>
 ```
-FOTO
+### Resultado
+	
+
 
 ### Script Usuarios
 
@@ -114,15 +116,15 @@ echo "**************"
 ## Ejercicio 3 - Host virtual en apache (script)
 - Comenzaremos actualizando los repositorios
 ```bash
-ssudo apt update
+sudo apt update
 ```
 - Despues, deberemos crear una carpeta een el directortorio /var/www/ donde gestionaremos las paginas y los host virtuales
 ```bash
-sudo mkdir -p /var/www/paco/public_html
+sudo mkdir -p /var/www/carlos/public_html
 ```
 - Ahora tenemos la estructura de directorio para nuestros archivos, pero son propiedad de nuestro usuario root. Si queremos que nuestro usuario regular pueda modificar archivos en nuestros directorios web, podemos cambiar la propiedad haciendo esto:
 ```bash
-sudo chown -R $USER:$USER /var/www/paco/public_html
+sudo chown -R $USER:$USER /var/www/carlos/public_html
 ```
 - Tambien, deberemos permitir el acceso de lectura al directorio /var/www con el comando:
 ```bash
@@ -150,18 +152,18 @@ sudo nano index.html
 - Guardaremos eel archivo, y nos dirigiremos a la ruta /etc/apache/sites-available/
 - Ahi, crearemos el archivo .conf y podemos hacerlo desde cero, o tambien podemos copiar el archivo 000-default.conf
 ```bash
-sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/paco.conf
+sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/carlos.conf
 ```
 - Ahora, editaremos el archivo con
 ```bash
-sudo nano /etc/apache2/sites-available/paco.conf
+sudo nano /etc/apache2/sites-available/carlos.conf
 ```
 - Y escribiremos lo siguiente:
 ```bash
 <VirtualHost *:80>
-     ServerAdmin admin@paco.marisma.local
-     ServerName www.paco.marisma.local
-     ServerAlias paco.marisma.local
+     ServerAdmin admin@carlos.marisma.local
+     ServerName www.carlos.marisma.local
+     ServerAlias carlos.marisma.local
      DocumentRoot /var/www/paco/public_html
      ErrorLog /error.log
      CustomLog /access.log combined
@@ -169,7 +171,7 @@ sudo nano /etc/apache2/sites-available/paco.conf
 ```
 - Seguidamente, deberemos habilitar nuestro sitio web
 ```bash
-sudo a2ensite paco.conf
+sudo a2ensite carlos.conf
 ```
 - Tambien, deberemos deshabilitar el sitio web por defecto (000-default.conf)
 ```bash
@@ -183,7 +185,7 @@ sudo nano /etc/hosts
 ```bash
 127.0.0.1   localhost
 127.0.1.1   guest-desktop
-your_server_IP paco.marisma.local
+your_server_IP carlos.marisma.local
 ```
 - Por ultimo reiniciaremos apache para guardar/aplicar los cambios en el sistema
 ```bash
@@ -191,10 +193,13 @@ sudo service apache22 restart
 ```
 - Y ya tendremos nuestro sitio web habilitado, el cual para probarlo, deberemos irnos al navegador y escribir:
 ```
-http://paco.com
+http://carlos.com
 ```
 
 ### Resultado:
+	
+![](Practica_Ignacio/2/1.png)	
+	
 ### Script automatico de creacion 
 
 ```bash
@@ -270,7 +275,10 @@ port 22
 ssh <usuario>@ip_que_utiliza
 ```
 - Un dato a parte, es que al instalar el servicio ssh, ya con agregar un usuario al sistema, podremos acceder a su ssh/sftp completamente
-###Comprobacion
+### Resultado:
+	
+![](Practica_Ignacio/3/Capturas/3.png)
+![](Practica_Ignacio/3/Capturas/4.png)
 	
 ### Script de creacion de usuario con ssh/sftp
 ```bash
