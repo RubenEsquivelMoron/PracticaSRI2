@@ -783,11 +783,8 @@ sudo service apache2 restart
 ```
 http://paco.marisma.local
 ```
-### Resultado
-
-![](Practica_Ignacio/6/Capturas/2.png)
+### Script de habilitacion de WSGI
 	
-- Script de habilitacion de mod WSGI
 ```bash
 #!/bin/bash
 
@@ -797,3 +794,9 @@ echo "*******************************************"
 echo "Complemento python habilitado correctamente"
 echo "*******************************************"
 ```
+	
+### Resultado
+
+![](Practica_Ignacio/6/Capturas/2.png)
+	
+
