@@ -627,7 +627,7 @@ o4=$(echo $ip_server | cut -d. -f4)
 
 
 rm /etc/bind/db.$dominio
-rm /etc/bind/$o3.$o2.$o1.in-addr.arpa
+rm /etc/bind/db.$o3.$o2.$o1.in-addr.arpa
 
 echo "***************************"
 echo "DNS eliminado correctamente"
