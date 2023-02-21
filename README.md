@@ -422,15 +422,47 @@ Zona inversa:
 sudo named-checkzone ip_completa /etc/bind/zona_inversa
 ```
 
-
 - Por ultimo, guardaremos el archivo, y le daremos los siguientes permisos
 ```bash
 sudo chmod 640 /etc/bind/db.dominio
 sudo chmod 640 /etc/bind/db.ip_menos_ultimo_octeto
 ```
-Por 
+
+- Ahora, reiniciaremos el servicio bind y comprobaremos que todo esta bien configurado
+	
+```bash
+sudo service bind9 restart
+```
+	
+- Ya tenemos todo configurado manualmente, ahora deberemos comprobar con los siguiente comandos:
+
+```bash
+En terminal de tu maquina por zona directa:
+dig localhost dominio
+
+En terminal de tu maquina por zona inversa:
+dig -x ip_completa
+	
+En termina de OTRA maquina windows:
+nslookup dominio ip_completa_de_maquina
+```
+	
+### Resultado:
+	
+- Zona directa:
+	
+![](Practica_Ignacio/DNS/10.png)
+	
+- Zona inversa:
+	
+![](Practica_Ignacio/DNS/14.png)
+	
+- Comprobacion WIndows:
+	
+![](Practica_Ignacio/DNS/13.png)
 
 
+### Script de creacion automatica
 
 
 
