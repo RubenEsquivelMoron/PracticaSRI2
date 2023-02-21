@@ -341,6 +341,101 @@ sudo iptables -A INPUT -p tcp --dport 990 -j ACCEPT
 - Y ya podremos utilizar el servicio SFTP y ssh por el certificado TLS encriptado
 	
 ## Ejercicio 6 - Se creará un subdominio en el servidor DNS con las resolución directa e inversa (script)
+- Comenzaremos instalando el servicio de bind en nuestra maquina
+```bash
+sudo apt install bind9 bind9utils bind9-doc
+```
+
+- Tras instalar el servicio, deberemos configurarlo a traves del archivo situado en /etc/bind/named.conf.options
+```bash
+sudo nano /etc/bind/named.conf.options
+```
+
+- Deberemos dejar el archivo de configuracion de la siguiente manera
+```bash
+options {
+
+        directory "/var/cache/bind";
+        recursion yes;
+        #allow-transfer { none;  };
+        allow-query { any; };
+        dnssec-validation auto;
+        dnssec-enable yes;
+
+        auth-nxdomain no;    # conform to RFC1035
+        listen-on-v6 { any; };
+
+        forwarders {
+                8.8.8.8;
+                8.8.4.4;
+        };
+};
+
+```
+
+- Tras escribir el archivo, deberemos escribir el siguiente comando para ver que el archivo ha sido editado correctamente
+```bash
+sudo named-checkconf
+```
+- Si no aparece nada, será que tenemos el archivo configurado correctamente
+
+- Ahora, procedemos a crear la zona directa en nuestro dominio, el cual, deberemos crear un fichero dentro de la ruta /etc/bind/ con el nombre del dominio que utilizaremos
+```bash
+cd sudo nano /etc/bind/<Dominio>
+```
+- Dentro de ese archivo deberemos escribir lo siguiente
+```bash
+/etc/bind/$TTL    604800
+@       IN      SOA     ns.dominio. root.dominio. (
+                          3         ; Serial
+                     604800         ; Refresh
+                      86400         ; Retry
+                    2419200         ; Expire
+                     604800 )       ; Negative Cache TTL
+;
+@       IN      NS      ns.dominio.
+        IN      A       192.168.73.134
+ns      IN      A       192.168.73.134
+www     IN      A       192.168.73.134
+```
+- Despues, deberemos guardar el archivo, y crearemos la zona inversa tambien en la misma ruta (/etc/bind) llamandolo con el nombre ip menos el ultimo octeto
+```bash
+$TTL    604800
+@       IN      SOA     ns.dominio. root.dominio. (
+                          3         ; Serial
+                     604800         ; Refresh
+                      86400         ; Retry
+                    2419200         ; Expire
+                     604800 )       ; Negative Cache TTL
+;
+@         IN      NS      ns.dominio.
+134       IN      PTR     ns.dominio.
+
+```
+
+- Seguidamente, comprobaremos que los archivos estan bien en cuanto a su sintaxis
+```bash
+Zona directa:
+sudo named-checkzone zonadirecta /etc/bind/db.dominio
+
+Zona inversa:
+sudo named-checkzone ip_completa /etc/bind/zona_inversa
+```
+
+
+- Por ultimo, guardaremos el archivo, y le daremos los siguientes permisos
+```bash
+sudo chmod 640 /etc/bind/db.dominio
+sudo chmod 640 /etc/bind/db.ip_menos_ultimo_octeto
+```
+Por 
+
+
+
+
+
+
+
 ## Ejercicio 7 - Se creará una base de datos además de un usuario con todos los permisos sobre dicha base de datos (ALL PRIVILEGES) (script)
 - Teniendo el servicio mysql instalado, deberemos ingresar a mysql a traves del terminal
 ```bash
