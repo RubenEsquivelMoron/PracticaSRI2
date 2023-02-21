@@ -107,7 +107,38 @@ echo "**************"
 echo "Usuario creado"
 echo "**************"
 ```
+### Script de eliminacion de usuario
+	
+```bash
+#!/bin/bash
 
+
+echo "Que usuario desea borrar?"
+
+read usuario
+
+while ! id $usuario &> /dev/null;
+do
+	echo "Este usuario no existe"
+	echo "------------------------"
+	echo "Escriba un usuario nuevo:"
+	read usuario
+done
+
+userdel $usuario
+rm -r /home/$usuario
+rm -r /var/www/$usuario
+
+echo "Eliminando usuario..."
+sleep 3;
+
+
+echo "*****************"
+echo "Usuario eliminado"
+echo "*****************"
+
+
+```
 
 ## Ejercicio 3 - Host virtual en apache (script)
 - Comenzaremos actualizando los repositorios
@@ -247,6 +278,32 @@ if [ -f $PATH_AVAILABLE ] ; then
 
    echo "$ip	$dominio.marisma.local" >> /etc/hosts
 fi
+```
+	
+### Script de eliminacion de virtual host
+```bash
+#!/bin/bash
+
+
+echo "Que usuario desea borrar?"
+
+read usuario
+
+
+
+rm /etc/apache2/sites-available/$usuario.marisma.conf
+rm /etc/apache2/sites-enabled/$usuario.marisma.conf
+
+
+echo "Eliminando VirtualHost..."
+sleep 2;
+
+
+echo "*****************"
+echo "Virtualhost eliminado"
+echo "*****************"
+
+
 ```
 	
 	
@@ -464,7 +521,120 @@ nslookup dominio ip_completa_de_maquina
 
 ### Script de creacion automatica
 
+```bash
+#!/bin/bash
 
+# Verificamos que se ejecute el script con permisos de root
+if [ "$EUID" -ne 0 ]
+  then echo "Por favor, ejecute como root"
+  exit
+fi
+
+# Solicitar al usuario que ingrese el nombre de dominio
+echo "Escribe el nombre del dominio:"
+read dominio
+
+# Solicitar al usuario que ingrese la dirección IP del servidor DNS
+echo "Ingrese la dirección IP del servidor DNS:"
+read ip_server
+
+#Separa la ip del servidor
+o1=$(echo $ip_server | cut -d. -f1)
+o2=$(echo $ip_server | cut -d. -f2)
+o3=$(echo $ip_server | cut -d. -f3)
+o4=$(echo $ip_server | cut -d. -f4)
+
+RUTA_ZONA_DIRECTA="/etc/bind/db.${dominio}"
+RUTA_ZONA_INVERSA="/etc/bind/db.$o3.$o2.$o1.in-addr.arpa"
+
+# Creamos el archivo de zona directa
+echo "\$TTL    604800
+@       IN      SOA     ns.${dominio}. root.${dominio}. (
+                          3         ; Serial
+                     604800         ; Refresh
+                      86400         ; Retry
+                    2419200         ; Expire
+                     604800 )       ; Negative Cache TTL
+;
+@       IN      NS      ns.${dominio}.
+ns      IN      A       ${ip_server}
+www     IN      A       ${ip_server}
+" > ${RUTA_ZONA_DIRECTA}
+
+# Creamos el archivo de zona inversa
+echo "\$TTL    604800
+@       IN      SOA     ns.${dominio}. root.${dominio}. (
+                          3         ; Serial
+                     604800         ; Refresh
+                      86400         ; Retry
+                    2419200         ; Expire
+                     604800 )       ; Negative Cache TTL
+;
+@	  IN	  NS	  ns1.$dominio.
+$o4       IN      PTR     ns.${dominio}.
+" > ${RUTA_ZONA_INVERSA}
+
+# Añade las zonas a los archivos de configuración.
+echo "include "/etc/bind/named.conf.options";
+include "/etc/bind/named.conf.local";
+include "/etc/bind/named.conf.default-zones";
+
+zone "${dominio}" {
+        type master;
+        file "${RUTA_ZONA_DIRECTA}";
+};
+
+zone "$o3.$o2.$o1.in-addr.arpa" {
+        type master;
+        file "${RUTA_ZONA_INVERSA}";
+};
+
+" > /etc/bind/named.conf
+
+# Le damos permisos a los archivos de zona creados
+chmod 640 ${RUTA_ZONA_DIRECTA}
+chmod 640 ${RUTA_ZONA_INVERSA}
+
+# Reiniciamos el servicio de Bind9
+systemctl restart bind9
+
+echo "***************************"
+echo "Subdominio creado con éxito"
+echo "***************************"
+```
+### Script de eliminacion de dominio
+```bash
+#!/bin/bash
+
+# Verificamos que se ejecute el script con permisos de root
+if [ "$EUID" -ne 0 ]
+  then echo "Por favor, ejecute como root"
+  exit
+fi
+
+# Solicitar al usuario que ingrese el nombre de dominio
+echo "Que dominio quieres eliminar:"
+read dominio
+
+# Solicitar al usuario que ingrese la dirección IP del servidor DNS
+echo "Ingrese la dirección IP que quieres eliminar:"
+read ip_server
+
+o1=$(echo $ip_server | cut -d. -f1)
+o2=$(echo $ip_server | cut -d. -f2)
+o3=$(echo $ip_server | cut -d. -f3)
+o4=$(echo $ip_server | cut -d. -f4)
+
+
+rm /etc/bind/db.$dominio
+rm /etc/bind/$o3.$o2.$o1.in-addr.arpa
+
+echo "***************************"
+echo "DNS eliminado correctamente"
+echo "***************************"
+
+
+```
 
 
 
@@ -601,3 +771,13 @@ http://paco.marisma.local
 
 ![](Practica_Ignacio/6/Capturas/2.png)
 	
+- Script de habilitacion de mod WSGI
+```bash
+#!/bin/bash
+
+
+a2enmod wsgi
+echo "*******************************************"
+echo "Complemento python habilitado correctamente"
+echo "*******************************************"
+```
