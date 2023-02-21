@@ -478,6 +478,22 @@ sudo named-checkzone zonadirecta /etc/bind/db.dominio
 Zona inversa:
 sudo named-checkzone ip_completa /etc/bind/zona_inversa
 ```
+- Tambien, deberemos escribir en el archivo situado en /etc/bind/ llamado named.conf donde escribiremos lo siguiente:
+```bash
+include /etc/bind/named.conf.options;
+include /etc/bind/named.conf.local;
+include /etc/bind/named.conf.default-zones;
+
+zone <dominio> {
+        type master;
+        file /etc/bind/db.maria.com;
+};
+
+zone <3_octetos_de_ip_al_reves>.in-addr.arpa {
+        type master;
+        file /etc/bind/db.<3_octetos_de_ip_al_reves>.in-addr.arpa;
+};
+```
 
 - Por ultimo, guardaremos el archivo, y le daremos los siguientes permisos
 ```bash
