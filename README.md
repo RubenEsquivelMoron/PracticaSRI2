@@ -486,7 +486,7 @@ include /etc/bind/named.conf.default-zones;
 
 zone <dominio> {
         type master;
-        file /etc/bind/db.maria.com;
+        file /etc/bind/db.<dominio>;
 };
 
 zone <3_octetos_de_ip_al_reves>.in-addr.arpa {
