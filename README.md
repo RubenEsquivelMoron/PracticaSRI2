@@ -412,22 +412,19 @@ sudo nano /etc/bind/named.conf.options
 ```bash
 options {
 
-        directory "/var/cache/bind";
-        recursion yes;
-        #allow-transfer { none;  };
-        allow-query { any; };
-        dnssec-validation auto;
-        dnssec-enable yes;
+	directory "/var/cache/bind";
+	recursion yes;
+	allow-transfer { none;  };
+	allow-query { any; };
+	dnssec-validation auto;
 
-        auth-nxdomain no;    # conform to RFC1035
-        listen-on-v6 { any; };
-
-        forwarders {
-                8.8.8.8;
-                8.8.4.4;
-        };
+	auth-nxdomain no;    # conform to RFC1035
+	listen-on-v6 { any; };
+	forwarders {
+		8.8.8.8;
+		8.8.4.4;
+	};
 };
-
 ```
 
 - Tras escribir el archivo, deberemos escribir el siguiente comando para ver que el archivo ha sido editado correctamente
@@ -442,32 +439,44 @@ cd sudo nano /etc/bind/<Dominio>
 ```
 - Dentro de ese archivo deberemos escribir lo siguiente
 ```bash
-/etc/bind/$TTL    604800
-@       IN      SOA     ns.dominio. root.dominio. (
-                          3         ; Serial
-                     604800         ; Refresh
-                      86400         ; Retry
-                    2419200         ; Expire
-                     604800 )       ; Negative Cache TTL
+; BIND reverse data file for local loopback interface
 ;
-@       IN      NS      ns.dominio.
-        IN      A       192.168.73.134
-ns      IN      A       192.168.73.134
-www     IN      A       192.168.73.134
+$TTL	604800
+@	IN	SOA	marisma.local. admin.marisma.local. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+; Name servers
+marisma.local.	IN	NS	ns1.marisma.local.
+marisma.local.	IN	NS	ns2.marisma.local.
+; A records for name servers
+ns1	IN	A	192.168.73.128
+ns2	IN	A	192.168.73.129
+
+; Other A records
+@	IN	A	192.168.73.130
+www	IN	A	192.168.73.131
+
 ```
 - Despues, deberemos guardar el archivo, y crearemos la zona inversa tambien en la misma ruta (/etc/bind) llamandolo con el nombre ip menos el ultimo octeto
 ```bash
-$TTL    604800
-@       IN      SOA     ns.dominio. root.dominio. (
-                          3         ; Serial
-                     604800         ; Refresh
-                      86400         ; Retry
-                    2419200         ; Expire
-                     604800 )       ; Negative Cache TTL
+; BIND reverse data file for local loopback interface
 ;
-@         IN      NS      ns.dominio.
-134       IN      PTR     ns.dominio.
-
+$TTL	604800
+@	IN	SOA	localhost. root.localhost. (
+			      1		; Serial
+			 604800		; Refresh
+			  86400		; Retry
+			2419200		; Expire
+			 604800 )	; Negative Cache TTL
+;
+@	IN	NS	ns1.marisma.local.
+128	IN	PTR	ns1.marisma.local.
+129     IN      PTR     ns2.marisma.local.
+130	IN	PTR	marisma.local.
 ```
 
 - Seguidamente, comprobaremos que los archivos estan bien en cuanto a su sintaxis
@@ -480,18 +489,20 @@ sudo named-checkzone ip_completa /etc/bind/zona_inversa
 ```
 - Tambien, deberemos escribir en el archivo situado en /etc/bind/ llamado named.conf donde escribiremos lo siguiente:
 ```bash
-include /etc/bind/named.conf.options;
-include /etc/bind/named.conf.local;
-include /etc/bind/named.conf.default-zones;
+include "/etc/bind/named.conf.options";
+include "/etc/bind/named.conf.local";
+include "/etc/bind/named.conf.default-zones";
+```
 
-zone <dominio> {
-        type master;
-        file /etc/bind/db.<dominio>;
+- Tambien deberemos editar el archivo llamado named.conf.local
+```bash
+zone "marisma.local" {
+	type master;
+	file "/etc/bind/db.marisma.local";
 };
-
-zone <3_octetos_de_ip_al_reves>.in-addr.arpa {
-        type master;
-        file /etc/bind/db.<3_octetos_de_ip_al_reves>.in-addr.arpa;
+zone "73.168.192.in-addr.arpa" {
+	type master;
+	file "/etc/bind/db.73.168.192.in-addr.arpa";
 };
 ```
 
@@ -551,108 +562,26 @@ echo "Escribe el nombre del dominio:"
 read dominio
 
 # Solicitar al usuario que ingrese la dirección IP del servidor DNS
-echo "Ingrese la dirección IP del servidor DNS:"
+echo "Ingrese la dirección IP del servidor DNS (de la red 192.168.73.<>):"
 read ip_server
 
-#Separa la ip del servidor
-o1=$(echo $ip_server | cut -d. -f1)
-o2=$(echo $ip_server | cut -d. -f2)
-o3=$(echo $ip_server | cut -d. -f3)
+#Separa la ip del servidor para cuarto octeto
 o4=$(echo $ip_server | cut -d. -f4)
 
-RUTA_ZONA_DIRECTA="/etc/bind/db.${dominio}"
-RUTA_ZONA_INVERSA="/etc/bind/db.$o3.$o2.$o1.in-addr.arpa"
+# Configuracion zona directa
+echo "\$ORIGIN $dominio" >> /etc/bind/db.marisma.local
+echo "@		IN	A	$ip_server" >> /etc/bind/db.marisma.local
+echo "www	IN	A	$ip_server" >> /etc/bind/db.marisma.local
 
-# Creamos el archivo de zona directa
-echo "\$TTL    604800
-@       IN      SOA     ns.${dominio}. root.${dominio}. (
-                          3         ; Serial
-                     604800         ; Refresh
-                      86400         ; Retry
-                    2419200         ; Expire
-                     604800 )       ; Negative Cache TTL
-;
-@       IN      NS      ns.${dominio}.
-ns      IN      A       ${ip_server}
-www     IN      A       ${ip_server}
-" > ${RUTA_ZONA_DIRECTA}
+# Configuracion de zona inversa
+echo "$o4	IN	PTR	$dominio.marisma.local." >> /etc/bind/db.73.168.192.in-addr.arpa
 
-# Creamos el archivo de zona inversa
-echo "\$TTL    604800
-@       IN      SOA     ns.${dominio}. root.${dominio}. (
-                          3         ; Serial
-                     604800         ; Refresh
-                      86400         ; Retry
-                    2419200         ; Expire
-                     604800 )       ; Negative Cache TTL
-;
-@	  IN	  NS	  ns1.$dominio.
-$o4       IN      PTR     ns.${dominio}.
-" > ${RUTA_ZONA_INVERSA}
-
-# Añade las zonas a los archivos de configuración.
-echo "include "/etc/bind/named.conf.options";
-include "/etc/bind/named.conf.local";
-include "/etc/bind/named.conf.default-zones";
-
-zone "${dominio}" {
-        type master;
-        file "${RUTA_ZONA_DIRECTA}";
-};
-
-zone "$o3.$o2.$o1.in-addr.arpa" {
-        type master;
-        file "${RUTA_ZONA_INVERSA}";
-};
-
-" > /etc/bind/named.conf
-
-# Le damos permisos a los archivos de zona creados
-chmod 640 ${RUTA_ZONA_DIRECTA}
-chmod 640 ${RUTA_ZONA_INVERSA}
-
-# Reiniciamos el servicio de Bind9
-systemctl restart bind9
+service bind9 restart
 
 echo "***************************"
 echo "Subdominio creado con éxito"
 echo "***************************"
 ```
-### Script de eliminacion de dominio
-```bash
-#!/bin/bash
-
-# Verificamos que se ejecute el script con permisos de root
-if [ "$EUID" -ne 0 ]
-  then echo "Por favor, ejecute como root"
-  exit
-fi
-
-# Solicitar al usuario que ingrese el nombre de dominio
-echo "Que dominio quieres eliminar:"
-read dominio
-
-# Solicitar al usuario que ingrese la dirección IP del servidor DNS
-echo "Ingrese la dirección IP que quieres eliminar:"
-read ip_server
-
-o1=$(echo $ip_server | cut -d. -f1)
-o2=$(echo $ip_server | cut -d. -f2)
-o3=$(echo $ip_server | cut -d. -f3)
-o4=$(echo $ip_server | cut -d. -f4)
-
-
-rm /etc/bind/db.$dominio
-rm /etc/bind/db.$o3.$o2.$o1.in-addr.arpa
-
-echo "***************************"
-echo "DNS eliminado correctamente"
-echo "***************************"
-
-
-```
-
-
 
 ## Ejercicio 7 - Se creará una base de datos además de un usuario con todos los permisos sobre dicha base de datos (ALL PRIVILEGES) (script)
 - Teniendo el servicio mysql instalado, deberemos ingresar a mysql a traves del terminal
