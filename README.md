@@ -506,12 +506,6 @@ zone "73.168.192.in-addr.arpa" {
 };
 ```
 
-- Por ultimo, guardaremos el archivo, y le daremos los siguientes permisos
-```bash
-sudo chmod 640 /etc/bind/db.dominio
-sudo chmod 640 /etc/bind/db.ip_menos_ultimo_octeto
-```
-
 - Ahora, reiniciaremos el servicio bind y comprobaremos que todo esta bien configurado
 	
 ```bash
