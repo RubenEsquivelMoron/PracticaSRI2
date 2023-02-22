@@ -527,18 +527,22 @@ nslookup dominio ip_completa_de_maquina
 	
 ### Resultado:
 	
-- Zona directa:
+- Zona directa en maquina local:
 	
-![]()
-****************************************************************************************************************************	
-- Zona inversa:
+![](Practica_Ignacio/DNS/1.png)
+
+- Zona inversa en maquina local:
 	
-![]()
-****************************************************************************************************************************	
-- Comprobacion WIndows:
+![](Practica_Ignacio/DNS/2.png)
 	
-![]()
-****************************************************************************************************************************
+- Zona directa en maquina secundaria (Windows):
+
+![](Practica_Ignacio/DNS/3.png)
+
+- Zona inversa en maquina secundaria (Windows):
+
+![](Practica_Ignacio/DNS/4.png)
+
 
 ### Script de creacion automatica
 
