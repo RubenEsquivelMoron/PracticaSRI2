@@ -612,15 +612,19 @@ show grants for '<usuario>'@'localhost';
 #!/bin/bash
 
 read -p "Introduce el nombre de usuario:" db_user
+read -p "Introduce la contraseña:" db_pass
 
 mysql -u root -p -e "CREATE DATABASE ${db_user};"
 
-mysql -u root -p -e "GRANT ALL PRIVILEGES ON ${db_user}.* TO '${db_user}'@'localhost' IDENTIFIED BY 'password';"
+mysql -u root -p -e "GRANT ALL PRIVILEGES ON ${db_user}.* TO '${db_user}'@'localhost' IDENTIFIED BY '${db_pass}';"
+
+mysql -u root -p -e "GRANT USAGE ON phpmyadmin.* TO '${db_user}'@'localhost' IDENTIFIED BY '${db_pass}';"
 
 echo "*********************************************"
 echo "Base de datos y usuario creados correctamente"
 echo "*********************************************"
 ```
+
 - Tambien deberemos utilizar phpmyadmin, con lo que lo instalaremos con:
 ```bash
 sudo apt install phpmyadmin
@@ -629,11 +633,15 @@ sudo apt install phpmyadmin
 ```
 localhost/phpmyadmin
 ```
-- Podremos acceder al gestor de bases de datos, donde para iniciar sesion, deberemos escribir
+- Podremos acceder al gestor de bases de datos, donde para iniciar sesion, deberemos escribir el usuario administrador, o el usuario que hemos creado junto con su contraseña asignada
 ```
 usuario: phpmyadmin
 contraseña:<contraseña_de_root>
-```	
+```
+```
+usuario: prueba
+contraseña:<contraseña_de_prueba>
+```
 - Escribiremos los credenciales y ya ingresaremos a phpmyadmin pero no podremos visualizar todas las bases de datos
 - Para ello, deberemos ingresar en mysql
 ```bash
@@ -648,7 +656,13 @@ grant all privileges on *.* to 'phpmyadmin'@'localhost' identified by '<contrase
 	
 ### Resultado
 	
+- Inicio de sesion de usuario root
+
 ![](Practica_Ignacio/phpmyadmin/3.png)
+
+- Inicio de sesion de usuario creado 
+
+![](Practica_Ignacio/phpmyadmin/otro_user.png)
 	
 ## Ejercicio 8 - Se habilitará la ejecución de aplicaciones Python con el servidor web 
 	
