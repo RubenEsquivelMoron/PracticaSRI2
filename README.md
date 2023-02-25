@@ -581,7 +581,7 @@ echo "Subdominio creado con éxito"
 echo "***************************"
 ```
 
-## Ejercicio 7 - Se creará una base de datos además de un usuario con todos los permisos sobre dicha base de datos (ALL PRIVILEGES) (script)
+## Ejercicio 7 - Se creará una base de datos además de un usuario con todos los permisos sobre dicha base de datos (ALL PRIVILEGES) y agregar usuarios para su inicio de sesion en phpmyadmin (script)
 - Teniendo el servicio mysql instalado, deberemos ingresar a mysql a traves del terminal
 ```bash
 sudo mysql
